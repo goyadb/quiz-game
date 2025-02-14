@@ -38,6 +38,7 @@ public class QuizCardController : MonoBehaviour
     private event QuizCardDelegate onCompleted;
     
     private int _answer;
+    private int _quizCardIndex;
     
     private Vector2 _correctBackPanelPosition;
     private Vector2 _incorrectBackPanelPosition;
@@ -49,13 +50,16 @@ public class QuizCardController : MonoBehaviour
         _incorrectBackPanelPosition = incorrectBackPanel.GetComponent<RectTransform>().anchoredPosition;
     }
 
-    public void SetQuiz(QuizData quizData, QuizCardDelegate onCompleted)
+    public void SetQuiz(QuizData quizData, int quizCardIndex , QuizCardDelegate onCompleted)
     {
         // 1. 퀴즈
         // 2. 설명
         // 3. 타입 (0: OX퀴즈, 1: 보기 3개 객관식)
         // 4. 정답
         // 5. 보기 (1,2,3)
+        
+        //퀴즈 카드 인덱스 할당
+        _quizCardIndex = quizCardIndex;
         
         // Front Panel 표시
         SetQuizCardPanelActive(QuizCardPanelType.Front);
@@ -148,6 +152,7 @@ public class QuizCardController : MonoBehaviour
     {
         
     }
+    
 
     #region Correct Back Panel
     /// <summary>
@@ -155,7 +160,7 @@ public class QuizCardController : MonoBehaviour
     /// </summary>
     public void OnClickNextQuizButton()
     {
-        onCompleted?.Invoke(0);
+        onCompleted?.Invoke(_quizCardIndex);
     }
     
     #endregion
@@ -167,7 +172,18 @@ public class QuizCardController : MonoBehaviour
     /// </summary>
     public void OnClickRetryQuizButton()
     {
-        
+        if (GameManager.Instance.heartCount > 0)
+        {
+            GameManager.Instance.heartCount--;
+            heartCountText.text = GameManager.Instance.heartCount.ToString();
+            
+            SetQuizCardPanelActive(QuizCardPanelType.Front);
+        }
+        else
+        {
+            //하트가 부족해서 다시 도전 불가
+            // Todo: 하트 부족 알림
+        }
     }
     
     #endregion

@@ -11,24 +11,24 @@ public class GamePanelController : MonoBehaviour
     private List<QuizData> _quizDataList;
     
     private int _lastGeneratedQuizIndex;
-    
-    private const int MAX_QUIZ_COUNT = 10;
+    private int _lastStageIndex;
     
     private void Start()
     {
-        // 테스트
-        _quizDataList = QuizDataController.LoadQuizData(0);
+        _lastStageIndex = UserInformation.LastStageIndex;
         
-        InitQuizCards();
+        InitQuizCards(_lastStageIndex);
     }
 
-    private void InitQuizCards()
+    private void InitQuizCards(int stageIndex)
     {
+        _quizDataList = QuizDataController.LoadQuizData(stageIndex+1);
+
         _firstQuizCardObject = ObjectPool.Instance.GetObject();
-        _firstQuizCardObject.GetComponent<QuizCardController>().SetQuiz(_quizDataList[0], OnCompletedQuiz);
+        _firstQuizCardObject.GetComponent<QuizCardController>().SetQuiz(_quizDataList[0], 0, OnCompletedQuiz);
         
         _secondQuizCardObject = ObjectPool.Instance.GetObject();
-        _secondQuizCardObject.GetComponent<QuizCardController>().SetQuiz(_quizDataList[1], OnCompletedQuiz);
+        _secondQuizCardObject.GetComponent<QuizCardController>().SetQuiz(_quizDataList[1], 1, OnCompletedQuiz);
         
         SetQuizCardPosition(_firstQuizCardObject, 0);
         SetQuizCardPosition(_secondQuizCardObject, 1);
@@ -39,6 +39,13 @@ public class GamePanelController : MonoBehaviour
 
     private void OnCompletedQuiz(int cardIndex)
     {
+        if (cardIndex >= Constants.MAX_QUIZ_COUNT - 1)
+        {
+            // Todo: 스테이지 클리어 연출
+            _lastStageIndex++;
+            InitQuizCards(_lastStageIndex);
+            return;
+        }
         ChangeQuizCard();
     }
 
@@ -61,7 +68,7 @@ public class GamePanelController : MonoBehaviour
 
     private void ChangeQuizCard()
     {
-        if (_lastGeneratedQuizIndex >= MAX_QUIZ_COUNT) return;
+        if (_lastGeneratedQuizIndex >= Constants.MAX_QUIZ_COUNT) return;
         
         var temp = _firstQuizCardObject;
         _firstQuizCardObject = _secondQuizCardObject;
@@ -71,7 +78,7 @@ public class GamePanelController : MonoBehaviour
         {
             _lastGeneratedQuizIndex++;
             _secondQuizCardObject.GetComponent<QuizCardController>()
-                .SetQuiz(_quizDataList[_lastGeneratedQuizIndex], OnCompletedQuiz);
+                .SetQuiz(_quizDataList[_lastGeneratedQuizIndex], _lastGeneratedQuizIndex, OnCompletedQuiz);
         }
         
         SetQuizCardPosition(_firstQuizCardObject, 0);

@@ -11,7 +11,7 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
-        heartCount = 3;
+        heartCount = UserInformation.HeartCount;
     }
 
     public void StartGame()
@@ -26,5 +26,11 @@ public class GameManager : Singleton<GameManager>
     
     protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+    }
+
+    private void OnApplicationQuit()
+    {
+        Debug.Log("OnApplicationQuit");
+        UserInformation.HeartCount = heartCount;
     }
 }
