@@ -15,21 +15,20 @@ public class GamePanelController : MonoBehaviour
     
     private void Start()
     {
-        _lastStageIndex = UserInformations.LastStageIndex;
+        _lastStageIndex = UserInformation.LastStageIndex;
+        
         InitQuizCards(_lastStageIndex);
     }
 
     private void InitQuizCards(int stageIndex)
     {
-        _quizDataList = QuizDataController.LoadQuizData(stageIndex);
-        
+        _quizDataList = QuizDataController.LoadQuizData(stageIndex+1);
+
         _firstQuizCardObject = ObjectPool.Instance.GetObject();
-        _firstQuizCardObject.GetComponent<QuizCardController>()
-            .SetQuiz(_quizDataList[0], 0, OnCompletedQuiz);
+        _firstQuizCardObject.GetComponent<QuizCardController>().SetQuiz(_quizDataList[0], 0, OnCompletedQuiz);
         
         _secondQuizCardObject = ObjectPool.Instance.GetObject();
-        _secondQuizCardObject.GetComponent<QuizCardController>()
-            .SetQuiz(_quizDataList[1], 1, OnCompletedQuiz);
+        _secondQuizCardObject.GetComponent<QuizCardController>().SetQuiz(_quizDataList[1], 1, OnCompletedQuiz);
         
         SetQuizCardPosition(_firstQuizCardObject, 0);
         SetQuizCardPosition(_secondQuizCardObject, 1);
@@ -42,19 +41,10 @@ public class GamePanelController : MonoBehaviour
     {
         if (cardIndex >= Constants.MAX_QUIZ_COUNT - 1)
         {
-            if (_lastStageIndex >= Constants.MAX_STAGE_COUNT - 1)
-            {
-                // TODO: 올 클리어 연출
-                
-                GameManager.Instance.QuitGame();
-            }
-            else
-            {
-                // TODO: 스테이지 클리어 연출
-                _lastStageIndex += 1;
-                InitQuizCards(_lastStageIndex);
-                return;   
-            }
+            // Todo: 스테이지 클리어 연출
+            _lastStageIndex++;
+            InitQuizCards(_lastStageIndex);
+            return;
         }
         ChangeQuizCard();
     }
