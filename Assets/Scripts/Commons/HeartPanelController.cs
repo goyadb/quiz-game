@@ -16,11 +16,18 @@ public class HeartPanelController : MonoBehaviour
     [SerializeField] private AudioClip _heartAddAudioClip;
     [SerializeField] private AudioClip _heartEmptyAudioClip;
     
+    private AudioSource _audioSource;
+    
     private int _heartCount;
     
     // 1. 하트 추가 연출
     // 2. 하트 감소 연출
     // 3. 하트 부족 연출
+
+    private void Awake()
+    {
+        _audioSource = GetComponent<AudioSource>();
+    }
 
     private void Start()
     {
@@ -80,7 +87,10 @@ public class HeartPanelController : MonoBehaviour
             sequence.AppendCallback(() =>
             {
                 ChangeTextAnimation(true);
-                // TODO: 효과음 재생
+                
+                // 효과음 재생
+                if (UserInformations.IsPlaySFX)
+                    _audioSource.PlayOneShot(_heartAddAudioClip);
             });
             sequence.AppendInterval(0.5f);
         }
@@ -88,11 +98,19 @@ public class HeartPanelController : MonoBehaviour
 
     public void EmptyHeart()
     {
+        // 효과음 재생
+        if (UserInformations.IsPlaySFX)
+            _audioSource.PlayOneShot(_heartEmptyAudioClip);
+        
         GetComponent<RectTransform>().DOPunchPosition(new Vector3(20f, 0, 0), 1f, 7);
     }
 
     public void RemoveHeart()
     {
+        // 효과음 재생
+        if (UserInformations.IsPlaySFX)
+            _audioSource.PlayOneShot(_heartRemoveAudioClip);
+        
         // 하트 사라지는 연출
         _heartRemoveImageObject.SetActive(true);
         _heartRemoveImageObject.transform.localScale = Vector3.zero;
