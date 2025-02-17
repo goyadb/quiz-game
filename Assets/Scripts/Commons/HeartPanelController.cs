@@ -22,11 +22,6 @@ public class HeartPanelController : MonoBehaviour
         _heartRemoveImageObject.SetActive(false);
         
         InitHeartCount(10);
-
-        DOVirtual.DelayedCall(3f, () =>
-        {
-            RemoveHeart();
-        });
         
     }
 
@@ -38,6 +33,59 @@ public class HeartPanelController : MonoBehaviour
     {
         _heartCount = heartCount;
         _heartCountText.text = _heartCount.ToString();
+    }
+
+    private void ChangeTextAnimation(bool isAdd)
+    {
+        float duration = 0.2f;
+        float yPos = 40f;
+        
+        _heartCountText.rectTransform.DOAnchorPosY(-yPos, duration);
+        _heartCountText.DOFade(0, duration).OnComplete(() =>
+        {
+            if (isAdd)
+            {
+                var currentHeartCount = _heartCountText.text;
+                _heartCountText.text = (int.Parse(currentHeartCount) + 1).ToString();
+            }
+            else
+            {
+                var currentHeartCount = _heartCountText.text;
+                _heartCountText.text = (int.Parse(currentHeartCount) - 1).ToString();
+            }
+            
+            // Heart Panel의 Width를 글자 수에 따라 변경
+            var textLength = _heartCountText.text.Length;
+            GetComponent<RectTransform>().sizeDelta = new Vector2(100 + textLength * 30f, 100f);
+            
+            // 새로운 하트 수 추가 애니메이션
+            _heartCountText.rectTransform.DOAnchorPosY(yPos, 0);
+            _heartCountText.rectTransform.DOAnchorPosY(0, duration);
+            _heartCountText.DOFade(1, duration).OnComplete(() =>
+            {
+
+            });
+        });
+    }
+
+    public void AddHeart(int heartCount)
+    {
+        Sequence sequence = DOTween.Sequence();
+
+        for (int i = 0; i < 3; i++)
+        {
+            sequence.AppendCallback(() =>
+            {
+                ChangeTextAnimation(true);
+                // TODO: 효과음 재생
+            });
+            sequence.AppendInterval(0.5f);
+        }
+    }
+
+    public void EmptyHeart()
+    {
+        GetComponent<RectTransform>().DOPunchPosition(new Vector3(20f, 0, 0), 1f, 7);
     }
 
     public void RemoveHeart()
@@ -53,21 +101,20 @@ public class HeartPanelController : MonoBehaviour
         // 하트 수 텍스트 떨어지는 연출
         DOVirtual.DelayedCall(1.5f, () =>
         {
-            _heartCountText.rectTransform.DOAnchorPosY(-40f, 1f);
-            _heartCountText.DOFade(0f, 1f).OnComplete(() =>
+            _heartCountText.rectTransform.DOAnchorPosY(-40f, 0.5f);
+            _heartCountText.DOFade(0f, 0.5f).OnComplete(() =>
             {
                 // 하트 개수 감소
                 _heartCount--;
                 _heartCountText.text = _heartCount.ToString();
-                
+
                 var textLength = _heartCountText.text.Length;
                 GetComponent<RectTransform>().sizeDelta = new Vector2(100 + textLength * 30f, 100f);
 
                 _heartCountText.rectTransform.DOAnchorPosY(40f, 0f);
-                _heartCountText.rectTransform.DOAnchorPosY(0, 1f);
-                _heartCountText.DOFade(1f, 1f);
+                _heartCountText.rectTransform.DOAnchorPosY(0, 0.5f);
+                _heartCountText.DOFade(1f, 0.5f);
             });
         });
-        
     }
 }
