@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public struct QuizData
 {
+    public int index;
     public string question;
     public string description;
     public int type;
@@ -74,7 +75,7 @@ public class QuizCardController : MonoBehaviour
         }
     }
 
-    public void SetQuiz(QuizData quizData, int quizCardIndex, QuizCardDelegate onCompleted)
+    public void SetQuiz(QuizData quizData, QuizCardDelegate onCompleted)
     {
         // 1. 퀴즈
         // 2. 설명
@@ -83,7 +84,7 @@ public class QuizCardController : MonoBehaviour
         // 5. 보기 (1,2,3)
         
         // 퀴즈 카드 인덱스 할당
-        _quizCardIndex = quizCardIndex;
+        _quizCardIndex = quizData.index;
         
         // Front Panel 표시
         SetQuizCardPanelActive(QuizCardPanelType.Front);
