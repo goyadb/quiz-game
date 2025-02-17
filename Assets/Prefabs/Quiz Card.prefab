@@ -1071,6 +1071,7 @@ MonoBehaviour:
   threeOptionButtons: {fileID: 936594970858238636}
   oxButtons: {fileID: 864821295840396571}
   heartCountText: {fileID: 2653644889069183611}
+  timer: {fileID: 3312007814581721576}
 --- !u!1 &3118483467672639083
 GameObject:
   m_ObjectHideFlags: 0
@@ -3573,6 +3574,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ffdd98bd7335c05448f64986dd80b27d, type: 3}
+--- !u!114 &3312007814581721576 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8984618795075575334, guid: ffdd98bd7335c05448f64986dd80b27d, type: 3}
+  m_PrefabInstance: {fileID: 5861816163359590350}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef97ec75a9f90254f9fc51379257b773, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &7566121328805016482 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4060305112283542636, guid: ffdd98bd7335c05448f64986dd80b27d, type: 3}

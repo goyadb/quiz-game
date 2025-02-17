@@ -32,6 +32,9 @@ public class QuizCardController : MonoBehaviour
     // Incorrect Back Panel
     [SerializeField] private TMP_Text heartCountText;
     
+    // Timer
+    [SerializeField] private GoyaTimer timer;
+    
     private enum QuizCardPanelType { Front, CorrectBackPanel, InCorrectBackPanel }
 
     public delegate void QuizCardDelegate(int cardIndex);
@@ -47,6 +50,28 @@ public class QuizCardController : MonoBehaviour
         // 숨겨진 패널의 좌표 저장
         _correctBackPanelPosition = correctBackPanel.GetComponent<RectTransform>().anchoredPosition;
         _incorrectBackPanelPosition = incorrectBackPanel.GetComponent<RectTransform>().anchoredPosition;
+    }
+
+    private void Start()
+    {
+        timer.OnTimeout = () =>
+        {
+            // TODO: 오답 연출
+            SetQuizCardPanelActive(QuizCardPanelType.InCorrectBackPanel);
+        };
+    }
+
+    public void SetVisible(bool isVisible)
+    {
+        if (isVisible)
+        {
+            timer.InitTimer();
+            timer.StartTimer();
+        }
+        else
+        {
+            timer.InitTimer();
+        }
     }
 
     public void SetQuiz(QuizData quizData, int quizCardIndex, QuizCardDelegate onCompleted)
@@ -100,6 +125,9 @@ public class QuizCardController : MonoBehaviour
     /// <param name="buttonIndex"></param>
     public void OnClickOptionButton(int buttonIndex)
     {
+        // Timer 일시 정시
+        timer.PauseTimer();
+        
         if (buttonIndex == _answer)
         {
             Debug.Log("정답!");
@@ -176,6 +204,10 @@ public class QuizCardController : MonoBehaviour
             heartCountText.text = GameManager.Instance.heartCount.ToString();
             
             SetQuizCardPanelActive(QuizCardPanelType.Front);
+            
+            // 타이머 초기화 및 시작
+            timer.InitTimer();
+            timer.StartTimer();
         }
         else
         {

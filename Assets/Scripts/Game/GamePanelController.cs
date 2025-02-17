@@ -67,12 +67,18 @@ public class GamePanelController : MonoBehaviour
             quizCardTransform.anchoredPosition = new Vector2(0, 0);
             quizCardTransform.localScale = Vector3.one;
             quizCardTransform.SetAsLastSibling();
+            
+            quizCardObject.GetComponent<QuizCardController>()
+                .SetVisible(true);
         }
         else if (index == 1)
         {
             quizCardTransform.anchoredPosition = new Vector2(0, 160);
             quizCardTransform.localScale = Vector3.one * 0.9f;
             quizCardTransform.SetAsFirstSibling();
+            
+            quizCardObject.GetComponent<QuizCardController>()
+                .SetVisible(false);
         }
     }
 

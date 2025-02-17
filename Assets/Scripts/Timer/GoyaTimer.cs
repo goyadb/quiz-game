@@ -16,6 +16,14 @@ public class GoyaTimer : MonoBehaviour
     
     public float CurrentTime { get; private set; }
     private bool _isPaused;
+    
+    public delegate void GoyaTimerDelegate();
+    public GoyaTimerDelegate OnTimeout;
+
+    private void Awake()
+    {
+        _isPaused = true;
+    }
 
     private void Update()
     {
@@ -27,6 +35,8 @@ public class GoyaTimer : MonoBehaviour
                 headCapImage.gameObject.SetActive(false);
                 tailCapImage.gameObject.SetActive(false);
                 _isPaused = true;
+                
+                OnTimeout?.Invoke();
             }
             else
             {
@@ -50,9 +60,13 @@ public class GoyaTimer : MonoBehaviour
         _isPaused = true;
     }
 
-    public void RessetTimer()
+    public void InitTimer()
     {
         CurrentTime = 0;
         fillImage.fillAmount = 1;
+        timeText.text = totalTime.ToString("F0");
+        headCapImage.gameObject.SetActive(true);
+        tailCapImage.gameObject.SetActive(true);
+        _isPaused = true;
     }
 }
