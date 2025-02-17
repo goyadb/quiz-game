@@ -6,10 +6,15 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(AudioSource))]
 public class HeartPanelController : MonoBehaviour
 {
     [SerializeField] private GameObject _heartRemoveImageObject;
     [SerializeField] private TMP_Text _heartCountText;
+    
+    [SerializeField] private AudioClip _heartRemoveAudioClip;
+    [SerializeField] private AudioClip _heartAddAudioClip;
+    [SerializeField] private AudioClip _heartEmptyAudioClip;
     
     private int _heartCount;
     
@@ -20,9 +25,7 @@ public class HeartPanelController : MonoBehaviour
     private void Start()
     {
         _heartRemoveImageObject.SetActive(false);
-        
         InitHeartCount(10);
-        
     }
 
     /// <summary>
@@ -99,22 +102,9 @@ public class HeartPanelController : MonoBehaviour
         _heartRemoveImageObject.GetComponent<Image>().DOFade(0f, 1f);
         
         // 하트 수 텍스트 떨어지는 연출
-        DOVirtual.DelayedCall(1.5f, () =>
+        DOVirtual.DelayedCall(1f, () =>
         {
-            _heartCountText.rectTransform.DOAnchorPosY(-40f, 0.5f);
-            _heartCountText.DOFade(0f, 0.5f).OnComplete(() =>
-            {
-                // 하트 개수 감소
-                _heartCount--;
-                _heartCountText.text = _heartCount.ToString();
-
-                var textLength = _heartCountText.text.Length;
-                GetComponent<RectTransform>().sizeDelta = new Vector2(100 + textLength * 30f, 100f);
-
-                _heartCountText.rectTransform.DOAnchorPosY(40f, 0f);
-                _heartCountText.rectTransform.DOAnchorPosY(0, 0.5f);
-                _heartCountText.DOFade(1f, 0.5f);
-            });
+            ChangeTextAnimation(false);
         });
     }
 }
