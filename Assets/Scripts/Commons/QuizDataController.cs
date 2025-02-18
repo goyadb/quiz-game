@@ -21,6 +21,7 @@ public static class QuizDataController
         {
             var values = Regex.Split(lines[i], COL_SEPARATOR);
             QuizData quizData = new QuizData();
+            quizData.index = i-1;
             
             for (var j = 0; j < values.Length; j++)
             {

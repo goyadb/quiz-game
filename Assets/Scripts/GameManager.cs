@@ -8,9 +8,17 @@ public class GameManager : Singleton<GameManager>
 {
     [HideInInspector] public int heartCount;
 
+
+    private void Awake()
+    {
+        
+    }
+    
     private void Start()
     {
         heartCount = UserInformations.HeartCount;
+        heartCount = 5;
+
     }
 
     public void StartGame()

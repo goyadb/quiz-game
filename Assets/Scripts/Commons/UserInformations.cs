@@ -30,4 +30,31 @@ public static class UserInformations
             PlayerPrefs.SetInt(LAST_STAGE_INDEX, value);
         }
     }
+
+
+    public static bool IsPlaySFX
+    {
+        get
+        {
+            return PlayerPrefs.GetInt("IsPlaySFX", 1) == 1;
+        }
+        set
+        {
+            PlayerPrefs.SetInt("IsPlaySFX", value ? 1 : 0);
+        }
+        
+    }
+    public static bool IsPlayBGM
+    {
+        get
+        {
+            return PlayerPrefs.GetInt("IsPlayBGM", 1) == 1;
+        }
+        set
+        {
+            PlayerPrefs.SetInt("IsPlayBGM", value ? 1 : 0);
+        }
+        
+    }
+    
 }
