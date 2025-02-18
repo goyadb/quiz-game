@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public struct QuizData
 {
@@ -36,12 +37,16 @@ public class QuizCardController : MonoBehaviour
     // Timer
     [SerializeField] private GoyaTimer timer;
     
+    //하트패널
+    [SerializeField] private HeartPanelController heartPanel;
+    
     private enum QuizCardPanelType { Front, CorrectBackPanel, InCorrectBackPanel }
 
     public delegate void QuizCardDelegate(int cardIndex);
     private event QuizCardDelegate onCompleted;
     private int _answer;
     private int _quizCardIndex;
+    private float animationDuration = 0.5f;
     
     private Vector2 _correctBackPanelPosition;
     private Vector2 _incorrectBackPanelPosition;
@@ -135,6 +140,11 @@ public class QuizCardController : MonoBehaviour
             // TODO: 정답 연출
             
             SetQuizCardPanelActive(QuizCardPanelType.CorrectBackPanel);
+            correctBackPanel.transform.rotation = Quaternion.Euler(0, -180, 0);
+            correctBackPanel.transform.DOLocalRotate(new Vector3(0, 0, 0), animationDuration, RotateMode.FastBeyond360)
+                .SetEase(Ease.InOutQuad);
+            
+            //SetQuizCardPanelActive(QuizCardPanelType.CorrectBackPanel);
         }
         else
         {
@@ -142,6 +152,10 @@ public class QuizCardController : MonoBehaviour
             // TODO: 오답 연출
             
             SetQuizCardPanelActive(QuizCardPanelType.InCorrectBackPanel);
+            incorrectBackPanel.transform.rotation = Quaternion.Euler(0, -180, 0);
+            incorrectBackPanel.transform.DOLocalRotate(new Vector3(0, 0, 0), animationDuration, RotateMode.FastBeyond360)
+                .SetEase(Ease.InOutQuad);
+            //SetQuizCardPanelActive(QuizCardPanelType.InCorrectBackPanel);
         }
     }
     
@@ -180,14 +194,18 @@ public class QuizCardController : MonoBehaviour
     {
         
     }
-
     #region Correct Back Panel
     /// <summary>
     /// 다음 버튼 이벤트
     /// </summary>
     public void OnClickNextQuizButton()
     {
-        onCompleted?.Invoke(_quizCardIndex);
+        correctBackPanel.GetComponent<RectTransform>().DOAnchorPosY(-500f, animationDuration).SetEase(Ease.InOutQuad).
+            OnComplete(() =>
+        {
+            onCompleted?.Invoke(_quizCardIndex);
+        });
+        
     }
     
     #endregion
@@ -203,8 +221,15 @@ public class QuizCardController : MonoBehaviour
         {
             GameManager.Instance.heartCount--;
             heartCountText.text = GameManager.Instance.heartCount.ToString();
-            
-            SetQuizCardPanelActive(QuizCardPanelType.Front);
+
+            heartPanel.RemoveHeart(() =>
+            {
+                SetQuizCardPanelActive(QuizCardPanelType.Front);
+                frontPanel.transform.rotation = Quaternion.Euler(0, -180, 0);
+                frontPanel.transform.DOLocalRotate(new Vector3(0, 0, 0), animationDuration, RotateMode.FastBeyond360)
+                    .SetEase(Ease.InOutQuad);
+            });
+            //SetQuizCardPanelActive(QuizCardPanelType.Front);
             
             // 타이머 초기화 및 시작
             timer.InitTimer();

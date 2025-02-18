@@ -3,12 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using DG.Tweening;
+using UnityEngine.UI;
+
 
 public class GamePanelController : MonoBehaviour
 {
-    private GameObject _firstQuizCardObject;
-    private GameObject _secondQuizCardObject;
-    
+    // private GameObject _firstQuizCardObject;
+    // private GameObject _secondQuizCardObject;
+    //
     private List<QuizData> _quizDataList;
     
     private int _lastGeneratedQuizIndex;
@@ -21,6 +24,7 @@ public class GamePanelController : MonoBehaviour
         // _quizCardQueue에 이미 Quiz Card Object가 있었다면,
 
         GameObject tempObject = null;
+        float animationDuration = 0.5f;
         
         // 1. 해당 오브젝트를 Deque 하고,
         if (_quizCardQueue.Count > 0 && !isInit)
@@ -32,8 +36,9 @@ public class GamePanelController : MonoBehaviour
         {
             // 2. 가장 첫 번째 오브젝트를 Peek 해서 사이즈와 위치 조절하고
             var firstQuizCardObject = _quizCardQueue.Peek();
-            firstQuizCardObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
-            firstQuizCardObject.transform.localScale = Vector3.one;
+            //firstQuizCardObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+            firstQuizCardObject.GetComponent<RectTransform>().DOAnchorPosY(0, animationDuration).SetEase(Ease.InOutQuad);
+            firstQuizCardObject.GetComponent<RectTransform>().DOScale(Vector3.one, animationDuration).SetEase(Ease.InOutQuad);
             firstQuizCardObject.transform.SetAsLastSibling();
             firstQuizCardObject.GetComponent<QuizCardController>().SetVisible(true);
         }
@@ -48,6 +53,7 @@ public class GamePanelController : MonoBehaviour
             quizCardObject.transform.localScale = Vector3.one * 0.9f;
             quizCardObject.transform.SetAsFirstSibling();
             _quizCardQueue.Enqueue(quizCardObject);
+            
         }
         
         if (tempObject != null) 
