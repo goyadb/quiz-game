@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +16,75 @@ public struct QuizData
     public string firstOption;
     public string secondOption;
     public string thirdOption;
+}
+
+// 퀴즈 카드의 위치 상태를 정의할 클래스가 반드시 구현할(약속) 메서드의 목록
+public interface IQuizCardPositionState
+{
+    void Trasition(bool withAnimation, Action onComplete = null);
+}
+
+// 퀴즈 카드의 위치 상태 전이를 관리할 목적
+public class QuizCardPositionStateContext
+{
+    private IQuizCardPositionState _currentState;
+
+    public void SetState(IQuizCardPositionState state)
+    {
+        _currentState = state;
+        _currentState.Trasition();
+    }
+}
+
+public class QuizCardPositionState
+{
+    protected QuizCardController _quizCardController;
+    protected RectTransform _rectTransform;
+    protected CanvasGroup _canvasGroup;
+
+    public QuizCardPositionState(QuizCardController quizCardController)
+    {
+        _quizCardController = quizCardController;
+        _rectTransform = _quizCardController.gameObject.GetComponent<RectTransform>();
+        _canvasGroup = _quizCardController.gameObject.GetComponent<CanvasGroup>();
+    }
+}
+
+// 퀴즈 카드가 첫 번째 위치에 나타날 상태를 처리할 상태 클래스
+public class QuizCardPositionStateFirst: QuizCardPositionState, IQuizCardPositionState
+{
+    public QuizCardPositionStateFirst(QuizCardController quizCardController) : base(quizCardController) { }
+
+    public void Trasition(bool withAnimation, Action onComplete = null)
+    {
+        var animationDuration = (withAnimation) ? 0.2f : 0f;
+        
+        _rectTransform.DOAnchorPos(Vector2.zero, animationDuration);
+        _rectTransform.DOScale(1f, animationDuration);
+        _canvasGroup.DOFade(1f, animationDuration).OnComplete(() => onComplete?.Invoke());
+
+        _rectTransform.SetAsLastSibling();
+    }
+}
+// 퀴즈 카드가 두 번째 위치에 나타날 상태를 처리할 상태 클래스
+public class QuizCardPositionStateSecond: QuizCardPositionState, IQuizCardPositionState
+{
+    public QuizCardPositionStateSecond(QuizCardController quizCardController) : base(quizCardController) { }
+
+    public void Trasition(bool withAnimation, Action onComplete = null)
+    {
+        throw new NotImplementedException();
+    }
+}
+// 퀴즈 카드가 사라질 상태를 처리할 상태 클래스
+public class QuizCardPositionStateRemove: QuizCardPositionState, IQuizCardPositionState
+{
+    public QuizCardPositionStateRemove(QuizCardController quizCardController) : base(quizCardController) { }
+
+    public void Trasition(bool withAnimation, Action onComplete = null)
+    {
+        
+    }
 }
 
 public class QuizCardController : MonoBehaviour

@@ -980,6 +980,7 @@ GameObject:
   - component: {fileID: 5893736273077972284}
   - component: {fileID: 7314762927618847598}
   - component: {fileID: 1993032585872486039}
+  - component: {fileID: 4764973779016277938}
   m_Layer: 5
   m_Name: Quiz Card
   m_TagString: Untagged
@@ -1072,6 +1073,18 @@ MonoBehaviour:
   oxButtons: {fileID: 864821295840396571}
   heartCountText: {fileID: 2653644889069183611}
   timer: {fileID: 3312007814581721576}
+--- !u!225 &4764973779016277938
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2750420438619583704}
+  m_Enabled: 1
+  m_Alpha: 0.03
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &3118483467672639083
 GameObject:
   m_ObjectHideFlags: 0
