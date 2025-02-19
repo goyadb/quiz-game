@@ -44,6 +44,7 @@ public class QuizCardController : MonoBehaviour
 
     public delegate void QuizCardDelegate(int cardIndex);
     private event QuizCardDelegate onCompleted;
+    
     private int _answer;
     private int _quizCardIndex;
     private float animationDuration = 0.5f;
@@ -58,6 +59,7 @@ public class QuizCardController : MonoBehaviour
         _incorrectBackPanelPosition = incorrectBackPanel.GetComponent<RectTransform>().anchoredPosition;
     }
 
+<<<<<<< HEAD
     private void Start()
     {
         timer.OnTimeout = () =>
@@ -81,6 +83,9 @@ public class QuizCardController : MonoBehaviour
     }
 
     public void SetQuiz(QuizData quizData, QuizCardDelegate onCompleted)
+=======
+    public void SetQuiz(QuizData quizData, int quizCardIndex , QuizCardDelegate onCompleted)
+>>>>>>> 0a0e83be9bcb4bccc35a673fe1e4e636803b901a
     {
         // 1. 퀴즈
         // 2. 설명
@@ -88,8 +93,13 @@ public class QuizCardController : MonoBehaviour
         // 4. 정답
         // 5. 보기 (1,2,3)
         
+<<<<<<< HEAD
         // 퀴즈 카드 인덱스 할당
         _quizCardIndex = quizData.index;
+=======
+        //퀴즈 카드 인덱스 할당
+        _quizCardIndex = quizCardIndex;
+>>>>>>> 0a0e83be9bcb4bccc35a673fe1e4e636803b901a
         
         // Front Panel 표시
         SetQuizCardPanelActive(QuizCardPanelType.Front);
@@ -194,6 +204,11 @@ public class QuizCardController : MonoBehaviour
     {
         
     }
+<<<<<<< HEAD
+=======
+    
+
+>>>>>>> 0a0e83be9bcb4bccc35a673fe1e4e636803b901a
     #region Correct Back Panel
     /// <summary>
     /// 다음 버튼 이벤트
@@ -237,8 +252,8 @@ public class QuizCardController : MonoBehaviour
         }
         else
         {
-            // 하트가 부족해서 다시도전 불가
-            // TODO: 하트 부족 알림
+            //하트가 부족해서 다시 도전 불가
+            // Todo: 하트 부족 알림
         }
     }
     

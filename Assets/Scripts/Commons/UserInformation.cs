@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-public static class UserInformations
+public class UserInformation : MonoBehaviour
 {
     private const string HEART_COUNT = "HeartCount";
     private const string LAST_STAGE_INDEX = "LastStageIndex";
 
-    // 하트 수
     public static int HeartCount
     {
         get
@@ -13,8 +14,7 @@ public static class UserInformations
         set
         { PlayerPrefs.SetInt(HEART_COUNT, value); }
     }
-    
-    // 스테이지 클리어 정보
+
     public static int LastStageIndex
     {
         get { return PlayerPrefs.GetInt(LAST_STAGE_INDEX, 0); }
@@ -34,4 +34,5 @@ public static class UserInformations
         get { return PlayerPrefs.GetInt("IsPlayBGM", 1) == 1; }
         set { PlayerPrefs.SetInt("IsPlayBGM", value ? 1 : 0); }
     }
+    
 }
