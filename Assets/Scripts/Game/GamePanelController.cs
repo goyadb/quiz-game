@@ -14,44 +14,68 @@ public class GamePanelController : MonoBehaviour
     private int _lastGeneratedQuizIndex;
     private int _lastStageIndex;
     
-    private Queue<GameObject> _quizCardQueue = new Queue<GameObject>();
+    private Queue<QuizCardController> _quizCardQueue = new Queue<QuizCardController>();
 
     public void AddQuizCardObject(QuizData? quizData, bool isInit = false)
     {
-        // _quizCardQueue에 이미 Quiz Card Object가 있었다면,
-
-        GameObject tempObject = null;
+        QuizCardController tempQuizCardController = null;
         
-        // 1. 해당 오브젝트를 Deque 하고,
-        if (_quizCardQueue.Count > 0 && !isInit)
+        // Step.1
+        // First 영역의 카드 제거
+        void RemoveFirstQuizCard(Action onCompleted = null)
         {
-            tempObject = _quizCardQueue.Dequeue();
+            tempQuizCardController = _quizCardQueue.Dequeue();
+            tempQuizCardController.SetQuizCardPosition(QuizCardController.QuizCardPositionType.Remove,
+                true, onCompleted);
         }
-
+        
+        // Step.2
+        // Second 영역의 카드를 First 영역으로 이동
+        void SecondQuizCardToFirst(Action onCompleted = null)
+        {
+            var firstQuizCardController = _quizCardQueue.Peek();
+            firstQuizCardController.SetQuizCardPosition(QuizCardController.QuizCardPositionType.First,
+                true, onCompleted);
+        }
+        
+        // Step.3
+        // 새로운 퀴즈 카드를 Second 영역에 생성
+        void AddNewQuizCard(Action onCompleted = null)
+        {
+            if (quizData.HasValue)
+            {
+                var quizCardObject = ObjectPool.Instance.GetObject();
+                var quizCardController = quizCardObject.GetComponent<QuizCardController>();
+                quizCardController.SetQuiz(quizData.Value, OnCompletedQuiz);
+                _quizCardQueue.Enqueue(quizCardController);
+                quizCardController.SetQuizCardPosition(QuizCardController.QuizCardPositionType.Second,
+                    true, onCompleted);
+            }
+        }
+        
+        // 애니메이션 처리
         if (_quizCardQueue.Count > 0)
         {
-            // 2. 가장 첫 번째 오브젝트를 Peek 해서 사이즈와 위치 조절하고
-            var firstQuizCardObject = _quizCardQueue.Peek();
-            firstQuizCardObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
-            firstQuizCardObject.transform.localScale = Vector3.one;
-            firstQuizCardObject.transform.SetAsLastSibling();
-            firstQuizCardObject.GetComponent<QuizCardController>().SetVisible(true);
+            if (isInit)
+            {
+                SecondQuizCardToFirst();
+                AddNewQuizCard();
+            }
+            else
+            {
+                RemoveFirstQuizCard(() =>
+                    SecondQuizCardToFirst( () => 
+                        AddNewQuizCard(() =>
+                        {
+                            if (tempQuizCardController != null) 
+                                ObjectPool.Instance.ReturnObject(tempQuizCardController.gameObject);
+                        })));
+            }
         }
-        
-        // 3. 새로운 quizCardObject를 Enqueue 함
-        if (quizData.HasValue)
+        else
         {
-            var quizCardObject = ObjectPool.Instance.GetObject();
-            quizCardObject.GetComponent<QuizCardController>().SetQuiz(quizData.Value, OnCompletedQuiz);
-            quizCardObject.GetComponent<QuizCardController>().SetVisible(false);
-            quizCardObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 160);
-            quizCardObject.transform.localScale = Vector3.one * 0.9f;
-            quizCardObject.transform.SetAsFirstSibling();
-            _quizCardQueue.Enqueue(quizCardObject);
+            AddNewQuizCard();
         }
-        
-        if (tempObject != null) 
-            ObjectPool.Instance.ReturnObject(tempObject);
     }
     
     private void Start()

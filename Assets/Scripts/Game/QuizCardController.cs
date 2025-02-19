@@ -77,7 +77,7 @@ public class QuizCardPositionStateSecond: QuizCardPositionState, IQuizCardPositi
     {
         var animationDuration = (withAnimation) ? 0.2f : 0f;
         
-        _rectTransform.DOAnchorPos(new Vector2(0f, 160f), animationDuration);
+        _rectTransform.DOAnchorPos(new Vector2(0f, 160f), 0);
         _rectTransform.DOScale(0.9f, animationDuration);
         _canvasGroup.DOFade(0.7f, animationDuration).OnComplete(() => onComplete?.Invoke());
 
@@ -125,12 +125,25 @@ public class QuizCardController : MonoBehaviour
     
     private Vector2 _correctBackPanelPosition;
     private Vector2 _incorrectBackPanelPosition;
+    
+    // 퀴즈 카드 위치 상태
+    private IQuizCardPositionState _positionStateFirst;
+    private IQuizCardPositionState _positionStateSecond;
+    private IQuizCardPositionState _positionStateRemove;
+    private QuizCardPositionStateContext _positionStateContext;
 
     private void Awake()
     {
         // 숨겨진 패널의 좌표 저장
         _correctBackPanelPosition = correctBackPanel.GetComponent<RectTransform>().anchoredPosition;
         _incorrectBackPanelPosition = incorrectBackPanel.GetComponent<RectTransform>().anchoredPosition;
+        
+        // 상태 관리를 위한 Context 객체 생성
+        _positionStateContext = new QuizCardPositionStateContext();
+        _positionStateFirst = new QuizCardPositionStateFirst(this);
+        _positionStateSecond = new QuizCardPositionStateSecond(this);
+        _positionStateRemove = new QuizCardPositionStateRemove(this);
+        _positionStateContext.SetState(_positionStateRemove, false); // 카드 위치 초기화
     }
 
     private void Start()
@@ -141,17 +154,38 @@ public class QuizCardController : MonoBehaviour
             SetQuizCardPanelActive(QuizCardPanelType.InCorrectBackPanel);
         };
     }
-
-    public void SetVisible(bool isVisible)
+    
+    public enum QuizCardPositionType { First, Second, Remove }
+    
+    /// <summary>
+    /// 퀴즈 카드 위치를 지정하는 메서드
+    /// </summary>
+    /// <param name="quizCardPositionType">퀴즈 카드 위치</param>
+    /// <param name="withAnimation">애니메이션 여부</param>
+    /// <param name="onComplete">위치 지정 후 실행할 동작</param>
+    public void SetQuizCardPosition(QuizCardPositionType quizCardPositionType,
+        bool withAnimation, Action onComplete = null)
     {
-        if (isVisible)
+        switch (quizCardPositionType)
         {
-            timer.InitTimer();
-            timer.StartTimer();
-        }
-        else
-        {
-            timer.InitTimer();
+            case QuizCardPositionType.First:
+                _positionStateContext.SetState(_positionStateFirst, withAnimation, () =>
+                {
+                    timer.InitTimer();
+                    timer.StartTimer();
+                    onComplete?.Invoke();
+                });
+                break;
+            case QuizCardPositionType.Second:
+                _positionStateContext.SetState(_positionStateSecond, withAnimation, () =>
+                {
+                    timer.InitTimer();
+                    onComplete?.Invoke();
+                });
+                break;
+            case QuizCardPositionType.Remove:
+                _positionStateContext.SetState(_positionStateRemove, withAnimation, onComplete);
+                break;
         }
     }
 
