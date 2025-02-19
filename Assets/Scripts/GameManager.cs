@@ -6,12 +6,11 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
-    [HideInInspector]
-    public int heartCount;
+    [HideInInspector] public int heartCount;
 
     private void Start()
     {
-        heartCount = UserInformation.HeartCount;
+        heartCount = UserInformations.HeartCount;
     }
 
     public void StartGame()
@@ -26,11 +25,12 @@ public class GameManager : Singleton<GameManager>
     
     protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        
     }
 
     private void OnApplicationQuit()
     {
-        Debug.Log("OnApplicationQuit");
-        UserInformation.HeartCount = heartCount;
+        Debug.Log("OnApplicationQuit!!");
+        UserInformations.HeartCount = heartCount;
     }
 }

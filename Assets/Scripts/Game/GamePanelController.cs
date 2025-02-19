@@ -62,14 +62,12 @@ public class GamePanelController : MonoBehaviour
     
     private void Start()
     {
-        _lastStageIndex = UserInformation.LastStageIndex;
-        
+        _lastStageIndex = UserInformations.LastStageIndex;
         InitQuizCards(_lastStageIndex);
     }
 
     private void InitQuizCards(int stageIndex)
     {
-<<<<<<< HEAD
         _quizDataList = QuizDataController.LoadQuizData(stageIndex);
         
         AddQuizCardObject(_quizDataList[0], true);
@@ -88,28 +86,12 @@ public class GamePanelController : MonoBehaviour
         //
         // // 마지막으로 생성된 퀴즈 인덱스
         // _lastGeneratedQuizIndex = 1;
-=======
-        _quizDataList = QuizDataController.LoadQuizData(stageIndex+1);
-
-        _firstQuizCardObject = ObjectPool.Instance.GetObject();
-        _firstQuizCardObject.GetComponent<QuizCardController>().SetQuiz(_quizDataList[0], 0, OnCompletedQuiz);
-        
-        _secondQuizCardObject = ObjectPool.Instance.GetObject();
-        _secondQuizCardObject.GetComponent<QuizCardController>().SetQuiz(_quizDataList[1], 1, OnCompletedQuiz);
-        
-        SetQuizCardPosition(_firstQuizCardObject, 0);
-        SetQuizCardPosition(_secondQuizCardObject, 1);
-
-        // 마지막으로 생성된 퀴즈 인덱스
-        _lastGeneratedQuizIndex = 1;
->>>>>>> 0a0e83be9bcb4bccc35a673fe1e4e636803b901a
     }
 
     private void OnCompletedQuiz(int cardIndex)
     {
         if (cardIndex < _quizDataList.Count - 2)
         {
-<<<<<<< HEAD
             AddQuizCardObject(_quizDataList[cardIndex + 2]);            
         }
         else
@@ -124,12 +106,6 @@ public class GamePanelController : MonoBehaviour
                 if (_lastStageIndex < Constants.MAX_STAGE_COUNT)
                     InitQuizCards(_lastStageIndex);
             }
-=======
-            // Todo: 스테이지 클리어 연출
-            _lastStageIndex++;
-            InitQuizCards(_lastStageIndex);
-            return;
->>>>>>> 0a0e83be9bcb4bccc35a673fe1e4e636803b901a
         }
         
         // if (cardIndex >= _quizDataList.Count)
@@ -180,7 +156,6 @@ public class GamePanelController : MonoBehaviour
     //     }
     // }
 
-<<<<<<< HEAD
     // private void ChangeQuizCard()
     // {
         // if (_lastGeneratedQuizIndex >= Constants.MAX_QUIZ_COUNT) return;
@@ -202,26 +177,3 @@ public class GamePanelController : MonoBehaviour
         // ObjectPool.Instance.ReturnObject(temp);
     // }
 }
-=======
-    private void ChangeQuizCard()
-    {
-        if (_lastGeneratedQuizIndex >= Constants.MAX_QUIZ_COUNT) return;
-        
-        var temp = _firstQuizCardObject;
-        _firstQuizCardObject = _secondQuizCardObject;
-        _secondQuizCardObject = ObjectPool.Instance.GetObject();
-
-        if (_lastGeneratedQuizIndex < _quizDataList.Count - 1)
-        {
-            _lastGeneratedQuizIndex++;
-            _secondQuizCardObject.GetComponent<QuizCardController>()
-                .SetQuiz(_quizDataList[_lastGeneratedQuizIndex], _lastGeneratedQuizIndex, OnCompletedQuiz);
-        }
-        
-        SetQuizCardPosition(_firstQuizCardObject, 0);
-        SetQuizCardPosition(_secondQuizCardObject, 1);
-        
-        ObjectPool.Instance.ReturnObject(temp);
-    }
-}
->>>>>>> 0a0e83be9bcb4bccc35a673fe1e4e636803b901a
