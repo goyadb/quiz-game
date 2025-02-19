@@ -29,10 +29,12 @@ public class QuizCardPositionStateContext
 {
     private IQuizCardPositionState _currentState;
 
-    public void SetState(IQuizCardPositionState state)
+    public void SetState(IQuizCardPositionState state, bool withAnimation, Action onComplete = null)
     {
+        if (_currentState == state) return;
+        
         _currentState = state;
-        _currentState.Trasition();
+        _currentState.Trasition(withAnimation, onComplete);
     }
 }
 
@@ -73,7 +75,13 @@ public class QuizCardPositionStateSecond: QuizCardPositionState, IQuizCardPositi
 
     public void Trasition(bool withAnimation, Action onComplete = null)
     {
-        throw new NotImplementedException();
+        var animationDuration = (withAnimation) ? 0.2f : 0f;
+        
+        _rectTransform.DOAnchorPos(new Vector2(0f, 160f), animationDuration);
+        _rectTransform.DOScale(0.9f, animationDuration);
+        _canvasGroup.DOFade(0.7f, animationDuration).OnComplete(() => onComplete?.Invoke());
+
+        _rectTransform.SetAsFirstSibling();
     }
 }
 // 퀴즈 카드가 사라질 상태를 처리할 상태 클래스
@@ -83,7 +91,9 @@ public class QuizCardPositionStateRemove: QuizCardPositionState, IQuizCardPositi
 
     public void Trasition(bool withAnimation, Action onComplete = null)
     {
-        
+        var animationDuration = (withAnimation) ? 0.2f : 0f;
+        _rectTransform.DOAnchorPos(new Vector2(0f, -280f), animationDuration);
+        _canvasGroup.DOFade(0f, animationDuration).OnComplete(() => onComplete?.Invoke());
     }
 }
 
