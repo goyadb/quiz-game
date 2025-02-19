@@ -97,6 +97,23 @@ public class QuizCardPositionStateRemove: QuizCardPositionState, IQuizCardPositi
     }
 }
 
+// 퀴즈 카드가 뒤집어지는 상태 클래스
+public class QuizCardPositionStateFlip : QuizCardPositionState, IQuizCardPositionState
+{
+    public QuizCardPositionStateFlip(QuizCardController quizCardController) : base(quizCardController) { }
+    public void Trasition(bool withAnimation, Action onComplete = null)
+    {
+        var animationDuration = (withAnimation) ? 0.3f : 0f;
+
+        _rectTransform.DORotate(new Vector3(0, 90, 0), animationDuration / 2)
+            .OnComplete(() =>
+            {
+                _rectTransform.DORotate(new Vector3(0, 0, 0), animationDuration / 2)
+                    .OnComplete(() => onComplete?.Invoke());
+            });
+    }
+}
+
 public class QuizCardController : MonoBehaviour
 {
     [SerializeField] private GameObject frontPanel;
@@ -130,6 +147,7 @@ public class QuizCardController : MonoBehaviour
     private IQuizCardPositionState _positionStateFirst;
     private IQuizCardPositionState _positionStateSecond;
     private IQuizCardPositionState _positionStateRemove;
+    private IQuizCardPositionState _positionStateFlip;
     private QuizCardPositionStateContext _positionStateContext;
 
     private void Awake()
@@ -143,6 +161,7 @@ public class QuizCardController : MonoBehaviour
         _positionStateFirst = new QuizCardPositionStateFirst(this);
         _positionStateSecond = new QuizCardPositionStateSecond(this);
         _positionStateRemove = new QuizCardPositionStateRemove(this);
+        _positionStateFlip = new QuizCardPositionStateFlip(this);
         _positionStateContext.SetState(_positionStateRemove, false); // 카드 위치 초기화
     }
 
@@ -273,19 +292,25 @@ public class QuizCardController : MonoBehaviour
                 break;
             case QuizCardPanelType.CorrectBackPanel:
                 frontPanel.SetActive(false);
-                correctBackPanel.SetActive(true);
                 incorrectBackPanel.SetActive(false);
                 
-                correctBackPanel.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
-                incorrectBackPanel.GetComponent<RectTransform>().anchoredPosition = _incorrectBackPanelPosition;
+                _positionStateContext.SetState(_positionStateFlip, true, () =>
+                {
+                    correctBackPanel.SetActive(true);
+                    correctBackPanel.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+                    incorrectBackPanel.GetComponent<RectTransform>().anchoredPosition = _incorrectBackPanelPosition;
+                });
                 break;
             case QuizCardPanelType.InCorrectBackPanel:
                 frontPanel.SetActive(false);
                 correctBackPanel.SetActive(false);
-                incorrectBackPanel.SetActive(true);
-                
-                correctBackPanel.GetComponent<RectTransform>().anchoredPosition = _correctBackPanelPosition;
-                incorrectBackPanel.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+
+                _positionStateContext.SetState(_positionStateFlip, true, () =>
+                {
+                    incorrectBackPanel.SetActive(true);
+                    correctBackPanel.GetComponent<RectTransform>().anchoredPosition = _correctBackPanelPosition;
+                    incorrectBackPanel.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+                });
                 break;
         }    
     }
