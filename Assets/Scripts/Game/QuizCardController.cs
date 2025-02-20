@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -130,8 +131,6 @@ public class QuizCardPositionStateFlipNormal : QuizCardPositionState, IQuizCardP
     }
 }
 
-
-
 public class QuizCardController : MonoBehaviour
 {
     [SerializeField] private GameObject frontPanel;
@@ -151,8 +150,11 @@ public class QuizCardController : MonoBehaviour
     // Timer
     [SerializeField] private GoyaTimer timer;
     
-    private enum QuizCardPanelType { Front, CorrectBackPanel, InCorrectBackPanel }
-
+    // 애니메이션
+    [SerializeField] private GameObject quizCardResultPanel;
+    
+    public enum QuizCardPanelType { Front, CorrectBackPanel, InCorrectBackPanel }
+    private enum QuizCardResultType { None, Correct, Incorrect }
     public delegate void QuizCardDelegate(int cardIndex);
     private event QuizCardDelegate onCompleted;
     private int _answer;
@@ -168,7 +170,10 @@ public class QuizCardController : MonoBehaviour
     private IQuizCardPositionState _positionStateFlip;
     private IQuizCardPositionState _positionStateFlipNormal;        // 추가
     private QuizCardPositionStateContext _positionStateContext;
-
+    
+    // 애니메이션
+    private Animator _animator;
+    
     private void Awake()
     {
         // 숨겨진 패널의 좌표 저장
@@ -183,6 +188,8 @@ public class QuizCardController : MonoBehaviour
         _positionStateFlip = new QuizCardPositionStateFlip(this);
         _positionStateFlipNormal = new QuizCardPositionStateFlipNormal(this);       // 추가
         _positionStateContext.SetState(_positionStateRemove, false);
+        
+        _animator = GetComponent<Animator>();
     }
 
     private void Start()
@@ -190,7 +197,8 @@ public class QuizCardController : MonoBehaviour
         timer.OnTimeout = () =>
         {
             // TODO: 오답 연출
-            SetQuizCardPanelActive(QuizCardPanelType.InCorrectBackPanel);
+            ShowQuizCardResult(QuizCardResultType.Incorrect);
+            // SetQuizCardPanelActive(QuizCardPanelType.InCorrectBackPanel);
         };
     }
     
@@ -271,6 +279,9 @@ public class QuizCardController : MonoBehaviour
         
         // Incorrect Back Panel
         heartCountText.text = GameManager.Instance.heartCount.ToString();
+        
+        // Quiz Card Result Panel
+        ShowQuizCardResult(QuizCardResultType.None);
     }
 
     /// <summary>
@@ -286,19 +297,42 @@ public class QuizCardController : MonoBehaviour
         {
             Debug.Log("정답!");
             // TODO: 정답 연출
-            
-            SetQuizCardPanelActive(QuizCardPanelType.CorrectBackPanel);
+            // SetQuizCardPanelActive(QuizCardPanelType.CorrectBackPanel);
+            ShowQuizCardResult(QuizCardResultType.Correct);
         }
         else
         {
             Debug.Log("오답~");
             // TODO: 오답 연출
-            
-            SetQuizCardPanelActive(QuizCardPanelType.InCorrectBackPanel);
+            // SetQuizCardPanelActive(QuizCardPanelType.InCorrectBackPanel);
+            ShowQuizCardResult(QuizCardResultType.Incorrect);
+        }
+    }
+
+    public void SetQuizCardPanelActive(QuizCardPanelType quizCardPanelType)
+    {
+        SetQuizCardPanelActive(quizCardPanelType, true);
+    }
+
+    private void ShowQuizCardResult(QuizCardResultType quizCardResultType)
+    {
+        switch (quizCardResultType)
+        {
+            case QuizCardResultType.Correct:
+                quizCardResultPanel.SetActive(true);
+                _animator.SetTrigger("correct");
+                break;
+            case QuizCardResultType.Incorrect:
+                quizCardResultPanel.SetActive(true);
+                _animator.SetTrigger("incorrect");
+                break;
+            case QuizCardResultType.None:
+                quizCardResultPanel.SetActive(false);
+                break;
         }
     }
     
-    private void SetQuizCardPanelActive(QuizCardPanelType quizCardPanelType, bool withAnimation = true)
+    public void SetQuizCardPanelActive(QuizCardPanelType quizCardPanelType, bool withAnimation)
     {
         switch (quizCardPanelType)
         {
