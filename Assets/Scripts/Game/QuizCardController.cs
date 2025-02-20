@@ -400,7 +400,7 @@ public class QuizCardController : MonoBehaviour
         {
             GameManager.Instance.heartCount--;
             heartCountText.text = GameManager.Instance.heartCount.ToString();
-            SetQuizCardPanelActive(QuizCardPanelType.Front);
+            SetQuizCardPanelActive(QuizCardPanelType.Front, true);
             
             // 타이머 초기화 및 시작
             timer.InitTimer();
