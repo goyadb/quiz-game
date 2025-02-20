@@ -311,6 +311,7 @@ public class QuizCardController : MonoBehaviour
 
     public void SetQuizCardPanelActive(QuizCardPanelType quizCardPanelType)
     {
+        ShowQuizCardResult(QuizCardResultType.None);
         SetQuizCardPanelActive(quizCardPanelType, true);
     }
 
