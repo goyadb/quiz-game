@@ -54,14 +54,14 @@ public class PopupPanelController : MonoBehaviour
         
         _backgroundImage.DOFade(1f, 0.2f);
         panelObject.GetComponent<CanvasGroup>().DOFade(1, 0.2f);
-        panelObject.GetComponent<RectTransform>().DOAnchorPosY(-70f, 0.2f);
+        panelObject.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.2f);
     }
 
     private void HidePopupPanel()
     {
         _backgroundImage.DOFade(1, 0);
         panelObject.GetComponent<CanvasGroup>().DOFade(1, 0);
-        panelObject.GetComponent<RectTransform>().DOAnchorPosY(-70f, 0);
+        panelObject.GetComponent<RectTransform>().DOAnchorPosY(0f, 0);
         
         _backgroundImage.DOFade(0f, 0.2f);
         panelObject.GetComponent<CanvasGroup>().DOFade(0, 0.2f);

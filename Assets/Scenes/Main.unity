@@ -1733,6 +1733,7 @@ MonoBehaviour:
   _stageText: {fileID: 1838532135}
   canvasTransform: {fileID: 1954096496}
   settingsPopupPanelPrefab: {fileID: 4826781050366574799, guid: 231c0cc9b5cf7c241a363ef3f82cd3b6, type: 3}
+  shopPopupPanelPrefab: {fileID: 4313353865603706446, guid: 136fe628ccc2b3a489dd62926334b79f, type: 3}
 --- !u!1 &2045851667
 GameObject:
   m_ObjectHideFlags: 0
@@ -1880,7 +1881,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2089296579}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1985954143}
+        m_TargetAssemblyTypeName: MainPanelController, Assembly-CSharp
+        m_MethodName: OnClickShopButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2089296579
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -10,6 +10,7 @@ public class MainPanelController : MonoBehaviour
     [SerializeField] private Transform canvasTransform;
     
     [SerializeField] private GameObject settingsPopupPanelPrefab;
+    [SerializeField] private GameObject shopPopupPanelPrefab;
     /// <summary>
     /// Play Button 눌렀을 때 호출되는 메서드
     /// </summary>
@@ -24,6 +25,7 @@ public class MainPanelController : MonoBehaviour
     /// </summary>
     public void OnClickShopButton()
     {
+        Instantiate(shopPopupPanelPrefab, canvasTransform);
     }
 
     /// <summary>
