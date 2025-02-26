@@ -54,6 +54,8 @@ public class StagePopupPanelController : MonoBehaviour
         var start = Mathf.FloorToInt(visibleRect.y / (cellHeight + spacing.y));
         var visibleCount = Mathf.CeilToInt(visibleRect.height / (cellHeight + spacing.y));
 
+        start = Mathf.Max(0, start - 1);
+
         // 버퍼 추가
 
         // Count 값 설정
@@ -105,7 +107,7 @@ public class StagePopupPanelController : MonoBehaviour
     {
         // Scroll View의 Content 사이즈 조절
         _scrollViewScrollRect.content.sizeDelta =
-            new Vector2(0, Mathf.CeilToInt(_maxStageCount / cellColumnCount) * (cellHeight + spacing.y));
+            new Vector2(0, Mathf.CeilToInt((float)_maxStageCount / cellColumnCount) * (cellHeight + spacing.y));
 
         // 화면에 보이는 셀을 담고있는 _visibleCell 리스트 초기화
         _visibleCells = new List<(int index, StageCellButton[] stageCellButtons)>();
