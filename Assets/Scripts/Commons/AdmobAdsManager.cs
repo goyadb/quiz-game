@@ -228,6 +228,7 @@ public class AdmobAdsManager : Singleton<AdmobAdsManager>
             Debug.Log("Rewarded ad loaded with response: " + ad.GetResponseInfo());
 
             _rewardedAd = ad;
+            RegisterRewardedAdEventHandlers(_rewardedAd);
         });
 
     }
