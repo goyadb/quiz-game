@@ -34,4 +34,11 @@ public static class UserInformations
         get { return PlayerPrefs.GetInt("IsPlayBGM", 1) == 1; }
         set { PlayerPrefs.SetInt("IsPlayBGM", value ? 1 : 0); }
     }
+
+    // 광고 제거 여부
+    public static bool IsNoAds
+    {
+        get { return PlayerPrefs.GetInt("IsNoAds", 0) == 1; }
+        set { PlayerPrefs.SetInt("IsNoAds", value ? 1 : 0); }
+    }
 }
